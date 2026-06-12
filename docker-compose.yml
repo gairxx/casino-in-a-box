@@ -1,0 +1,51 @@
+services:
+  # The Laravel Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: social-gaming-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+      - social-gaming
+    depends_on:
+      - db
+
+  # The Database
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./lite13.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - social-gaming
+
+  # The Nginx Web Server (required for Laravel in production)
+  nginx:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    volumes:
+      - .:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - social-gaming
+    depends_on:
+      - app
+
+networks:
+  social-gaming:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
