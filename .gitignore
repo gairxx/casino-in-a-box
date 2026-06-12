@@ -1,1 +1,11 @@
-casino/casino1.zip
+/casino/vendor
+/casino/node_modules
+/casino/public/storage
+/casino/.env
+/casino/.phpunit.result.cache
+/mysql_data
+.env
+.idea
+.vscode
+*.log
+.DS_Store
